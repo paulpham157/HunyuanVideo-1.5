@@ -48,7 +48,7 @@ HunyuanVideo-1.5作为一款轻量级视频生成模型，仅需83亿参数即�
 
 ## 🧩 社区贡献
 
-如果您在项目中使用或开发了 HunyuanVideo，欢迎告知我们。
+如果您在项目中使用或开发了 HunyuanVideo-1.5，欢迎告知我们。
 
 - **ComfyUI** - [ComfyUI](https://github.com/comfyanonymous/ComfyUI): 一个强大且模块化的扩散模型图形界面，采用节点式工作流。ComfyUI 支持 HunyuanVideo-1.5，并提供多种工程加速优化以实现快速推理。
 
@@ -86,7 +86,7 @@ HunyuanVideo-1.5作为一款轻量级视频生成模型，仅需83亿参数即�
 
 
 ## 📖 Introduction
-我们推出了 HunyuanVideo 1.5，一个轻量级但功能强大的视频生成模型。该模型仅使用8.3B参数就实现了开源最先进的视觉质量和运动连贯性，并能在消费级 GPU 上进行高效推理。这一成果基于几个关键组件，包括精细的数据整理、采用稀疏注意力SSTA的DiT 架构、通过专用 OCR 编码增强的双语理解能力、渐进式预训练和后训练，以及高效的视频超分辨率网络。利用这些设计，我们开发了一个统一的框架，能够跨多种时长和分辨率生成高质量的文生视频和图生视频。大量实验证明，这个紧凑而高效的模型在开源模型中确立了新的技术标杆。通过发布 HunyuanVideo 1.5 的代码和权重，我们为社区提供了一个高性能的基础，显著降低了视频创作和研究的成本，使先进的视频生成技术对所有人更加触手可及。
+我们推出了 HunyuanVideo-1.5，一个轻量级但功能强大的视频生成模型。该模型仅使用8.3B参数就实现了开源最先进的视觉质量和运动连贯性，并能在消费级 GPU 上进行高效推理。这一成果基于几个关键组件，包括精细的数据整理、采用稀疏注意力SSTA的DiT 架构、通过专用 OCR 编码增强的双语理解能力、渐进式预训练和后训练，以及高效的视频超分辨率网络。利用这些设计，我们开发了一个统一的框架，能够跨多种时长和分辨率生成高质量的文生视频和图生视频。大量实验证明，这个紧凑而高效的模型在开源模型中确立了新的技术标杆。通过发布 HunyuanVideo-1.5 的代码和权重，我们为社区提供了一个高性能的基础，显著降低了视频创作和研究的成本，使先进的视频生成技术对所有人更加触手可及。
 
 ## ✨ Key Features
 - **轻量级高性能架构**：我们提出了一种高效架构，将 83 亿参数的 Diffusion Transformer（DiT）与 3D 因果 VAE 相结合，在空间维度实现了 16 倍的压缩，在时间轴上实现了 4 倍的压缩。此外，创新的 SSTA机制修剪了冗余的时空 kv 块，显著减少了长视频序列的计算开销，并加速了推理，在 10 秒 720p 视频合成中，相比 FlashAttention-3 实现了端到端 $1.87 \times $ 的加速。
@@ -171,7 +171,7 @@ pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-s
 提示词增强在我们的模型生成高质量视频方面起着至关重要的作用。通过撰写更长、更详细的提示词，生成的视频质量将得到显著改善。我们鼓励您编写全面且描述性的提示词，以获得最佳的视频质量。我们建议社区伙伴参考我们的官方指南，了解如何撰写有效的提示词。
 
 
-**参考：** **[HunyuanVideo 1.5 提示词手册](https://doc.weixin.qq.com/doc/w3_AXcAcwZSAGgCNhei2zzNUS8O4mKop?scode=AJEAIQdfAAoE1dhviFAAkA-gaeACk)**
+**参考：** **[HunyuanVideo-1.5 提示词手册](https://doc.weixin.qq.com/doc/w3_AXcAcwZSAGgCNhei2zzNUS8O4mKop?scode=AJEAIQdfAAoE1dhviFAAkA-gaeACk)**
 
 
 ### 自动提示词增强的系统提示词
@@ -261,18 +261,18 @@ torchrun --nproc_per_node=$N_INFERENCE_GPU generate.py \
 ## 🧱 模型卡片
 |模型名称| 下载链接                     |
 |-|---------------------------| 
-|HunyuanVideo 1.5-480P-T2V|[480P-T2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_t2v) |
-|HunyuanVideo 1.5-480P-I2V |[480P-I2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v) |
-|HunyuanVideo 1.5-480P-T2V-distill | [480P-T2V-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_t2v_distilled) |
-|HunyuanVideo 1.5-480P-I2V-distill |[480P-I2V-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v_distilled) |
-|HunyuanVideo 1.5-720P-T2V|[720P-T2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_t2v) |
-|HunyuanVideo 1.5-720P-I2V |[720P-I2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_i2v) |
-|HunyuanVideo 1.5-720P-T2V-distiill| Comming soon |
-|HunyuanVideo 1.5-720P-I2V-distiill |[720P-I2V-distiill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_i2v_distilled) |
-|HunyuanVideo 1.5-720P-T2V-sparse-distiill| Comming soon |
-|HunyuanVideo 1.5-720P-I2V-sparse-distiill |[720P-I2V-sparse-distiill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_i2v_distilled_sparse) |
-|HunyuanVideo 1.5-720P-sr |[720P-sr](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_sr_distilled) |
-|HunyuanVideo 1.5-1080P-sr |[1080P-sr](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/1080p_sr_distilled) |
+|HunyuanVideo-1.5-480P-T2V|[480P-T2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_t2v) |
+|HunyuanVideo-1.5-480P-I2V |[480P-I2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v) |
+|HunyuanVideo-1.5-480P-T2V-distill | [480P-T2V-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_t2v_distilled) |
+|HunyuanVideo-1.5-480P-I2V-distill |[480P-I2V-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v_distilled) |
+|HunyuanVideo-1.5-720P-T2V|[720P-T2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_t2v) |
+|HunyuanVideo-1.5-720P-I2V |[720P-I2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_i2v) |
+|HunyuanVideo-1.5-720P-T2V-distiill| Comming soon |
+|HunyuanVideo-1.5-720P-I2V-distiill |[720P-I2V-distiill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_i2v_distilled) |
+|HunyuanVideo-1.5-720P-T2V-sparse-distiill| Comming soon |
+|HunyuanVideo-1.5-720P-I2V-sparse-distiill |[720P-I2V-sparse-distiill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_i2v_distilled_sparse) |
+|HunyuanVideo-1.5-720P-sr |[720P-sr](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_sr_distilled) |
+|HunyuanVideo-1.5-1080P-sr |[1080P-sr](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/1080p_sr_distilled) |
 
 
 
@@ -322,7 +322,7 @@ GSB（Good/Same/Bad）评估法被广泛用于基于整体视频感知质量来�
 我们在8块H800 GPU上启用了基础工程级加速技术，报告推理速度，以展示在实际部署场景中可实现的实用性能。
 请注意，在本实验中，我们不以牺牲生成质量为代价追求最极端的加速，而是在保持几乎相同的输出质量的同时实现显著的速度提升。
 
-我们在下方报告了HunyuanVideo 1.5在50个扩散步数下的总推理时间：
+我们在下方报告了HunyuanVideo-1.5在50个扩散步数下的总推理时间：
 
 <div align="center">
 <img src="./assets/speed.png" alt="" width="100%">
