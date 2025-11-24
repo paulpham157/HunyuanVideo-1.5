@@ -26,7 +26,7 @@ HunyuanVideo-1.5作为一款轻量级视频生成模型，仅需83亿参数即�
   <a href=https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5 target="_blank"><img src= https://img.shields.io/badge/Page-bb8a2e.svg?logo=github height=22px></a>
   <a href="https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5/blob/report/HunyuanVideo_1_5.pdf" target="_blank"><img src=https://img.shields.io/badge/Report-b5212f.svg?logo=arxiv height=22px></a>
   <a href=https://x.com/TencentHunyuan target="_blank"><img src=https://img.shields.io/badge/Hunyuan-black.svg?logo=x height=22px></a>
-  <a href="https://doc.weixin.qq.com/doc/w3_AXcAcwZSAGgCNACVygLxeQjyn4FYS?scode=AJEAIQdfAAoSfXnTj0AAkA-gaeACk" target="_blank"><img src=https://img.shields.io/badge/📚-PromptHandBook-blue.svg?logo=book height=22px></a> <br/>
+  <a href="https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5/blob/main/assets/HunyuanVideo_1_5_Prompt_Handbook_EN.md" target="_blank"><img src=https://img.shields.io/badge/📚-PromptHandBook-blue.svg?logo=book height=22px></a> <br/>
   <a href="./ComfyUI/README.md" target="_blank"><img src=https://img.shields.io/badge/ComfyUI-blue.svg?logo=book height=22px></a>
   <a href="https://github.com/ModelTC/LightX2V" target="_blank"><img src=https://img.shields.io/badge/LightX2V-yellow.svg?logo=book height=22px></a>
 
@@ -175,7 +175,7 @@ pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-s
 提示词增强在我们的模型生成高质量视频方面起着至关重要的作用。通过撰写更长、更详细的提示词，生成的视频质量将得到显著改善。我们鼓励您编写全面且描述性的提示词，以获得最佳的视频质量。我们建议社区伙伴参考我们的官方指南，了解如何撰写有效的提示词。
 
 
-**参考：** **[HunyuanVideo-1.5 提示词手册](https://doc.weixin.qq.com/doc/w3_AXcAcwZSAGgCNhei2zzNUS8O4mKop?scode=AJEAIQdfAAoE1dhviFAAkA-gaeACk)**
+**参考：** **[HunyuanVideo-1.5 提示词手册](https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5/blob/main/assets/HunyuanVideo_1_5_Prompt_Handbook_EN.md)**
 
 
 ### 自动提示词增强的系统提示词

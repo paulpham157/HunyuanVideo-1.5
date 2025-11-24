@@ -65,7 +65,7 @@ Find workflow templates at:
 ### Prompt Writing Tips
 
 - Use detailed, descriptive prompts for better results
-- Refer to the [HunyuanVideo-1.5 Prompt Handbook](https://doc.weixin.qq.com/doc/w3_AXcAcwZSAGgCNACVygLxeQjyn4FYS?scode=AJEAIQdfAAoSfXnTj0AAkA-gaeACk) for guidance
+- Refer to the [HunyuanVideo-1.5 Prompt Handbook](https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5/blob/main/assets/HunyuanVideo_1_5_Prompt_Handbook_EN.md) for guidance
 - Include details about camera movement, style, lighting, etc.
 
 ## 🔗 Links
@@ -74,7 +74,7 @@ Find workflow templates at:
 - **HunyuanVideo-1.5 Repository**: https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5
 - **Model Checkpoint**: https://huggingface.co/Comfy-Org/HunyuanVideo_1.5_repackaged
 - **Workflow Templates**: https://github.com/Comfy-Org/workflow_templates/tree/main/templates
-- **Prompt Handbook**: https://doc.weixin.qq.com/doc/w3_AXcAcwZSAGgCNACVygLxeQjyn4FYS?scode=AJEAIQdfAAoSfXnTj0AAkA-gaeACk
+- **Prompt Handbook**: https://github.com/Tencent-Hunyuan/HunyuanVideo-1.5/blob/main/assets/HunyuanVideo_1_5_Prompt_Handbook_EN.md
 
 ---
 
