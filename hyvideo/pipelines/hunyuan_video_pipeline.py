@@ -1078,7 +1078,7 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
                 f"Shift:                     {flow_shift}\n"
                 f"Seed:                      {seed}\n"
                 f"Video Resolution:          {width} x {height}\n"
-                f'Attn mode:                 {self.transformer.config.attn_mode}\n'
+                f'Attn mode:                 {self.transformer.attn_mode}\n'
                 f"Transformer dtype:         {self.transformer.dtype}\n"
                 f"Sampling Steps:            {num_inference_steps}\n"
                 f"Use Meanflow:              {self.use_meanflow}\n"
@@ -1428,6 +1428,10 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
         vae.set_tile_sample_min_size(vae_inference_config['sample_size'], vae_inference_config['tile_overlap_factor'])
         scheduler = FlowMatchDiscreteScheduler.from_pretrained(os.path.join(cached_folder, "scheduler"))
 
+        infer_state = get_infer_state()
+        if infer_state.enable_sageattn:
+            transformer.set_attn_mode('sageattn')
+
         if force_sparse_attn:
             if not is_sparse_attn_supported():
                 raise RuntimeError(f"Current GPU is {torch.cuda.get_device_properties(0).name}, which does not support sparse attention.")
@@ -1462,7 +1466,6 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
 
         loguru.logger.info(f"{enable_offloading=} {enable_group_offloading=} {overlap_group_offloading=}")
 
-        infer_state = get_infer_state()
         if infer_state.enable_cache:
             no_cache_steps = list(range(0, infer_state.cache_start_step)) + list(range(infer_state.cache_start_step, infer_state.cache_end_step, infer_state.cache_step_interval)) + list(range(infer_state.cache_end_step, infer_state.total_steps))
             cache_helper = CacheHelper(
@@ -1503,6 +1506,9 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
             pipeline.sr_pipeline = sr_pipeline
             if enable_group_offloading:
                 sr_pipeline.transformer.enable_group_offload(**group_offloading_kwargs)
+
+            if infer_state.enable_sageattn:
+                sr_pipeline.transformer.set_attn_mode('sageattn')
 
 
         return pipeline
