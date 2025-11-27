@@ -15,6 +15,7 @@ safetensors==0.4.5
 torchvision==0.21.0
 qwen-vl-utils==0.0.8
 huggingface-hub==0.34.0
+angelslim==0.2.1
 huggingface_hub[cli]
 transformers[accelerate,tiktoken]==4.56.0
 wheel
