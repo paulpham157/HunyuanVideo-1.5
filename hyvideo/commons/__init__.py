@@ -101,7 +101,7 @@ PIPELINE_CONFIGS = {
         'guidance_scale': 1.0,
         'embedded_guidance_scale': None,
         'flow_shift': 7.0,
-        'num_inference_steps': 8,
+        'num_inference_steps': 12,
     },
 }
 
