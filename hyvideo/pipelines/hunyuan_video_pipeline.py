@@ -1542,14 +1542,14 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
         if memory_limitation is None:
             memory_limitation = get_gpu_memory()
         GB = 1024 * 1024 * 1024
-        if memory_limitation < 28 * GB:
+        if memory_limitation > 21 * GB:
+            sample_size = 256
+            tile_overlap_factor = 0.125
+            dtype = torch.float16
+        else:
             sample_size = 128
             tile_overlap_factor = 0.25
             dtype = torch.float16
-        else:
-            sample_size = 256
-            tile_overlap_factor = 0.25
-            dtype = torch.float32
         return {'sample_size': sample_size, 'tile_overlap_factor': tile_overlap_factor, 'dtype': dtype}
 
 
