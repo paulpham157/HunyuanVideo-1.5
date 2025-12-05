@@ -39,7 +39,7 @@ Find workflow templates at:
 
 
 * **Important**: Workflows are still being updated. Please ensure you are using the latest version of the workflow templates to guarantee the best generation results.
-* **Important**: The distilled models are CFG-distilled models rather than step-distilled models. Please run with 50 inference steps for best generation quality. The recommended configurations are provided in the following table.
+* **Important**: The distilled models include both CFG-distilled models and step-distilled models. CFG-distilled models should run with 50 inference steps for best generation quality. Step-distilled models (480p I2V) can run with 8 or 12 steps (recommended) for faster generation, or 4 steps for even faster speed with slightly reduced quality. The recommended configurations are provided in the following table.
 
 
 ### Recommended Inference Configurations
@@ -55,6 +55,7 @@ Find workflow templates at:
 | 720p I2V | 6 | None | 7 | 50 |
 | 480p T2V CFG Distilled | 1 | None | 5 | 50 |
 | 480p I2V CFG Distilled | 1 | None | 5 | 50 |
+| 480p I2V Step Distilled | 1 | None | 7 | 8 or 12 (recommended) |
 | 720p T2V CFG Distilled | 1 | None | 9 | 50 |
 | 720p I2V CFG Distilled | 1 | None | 7 | 50 |
 | 720p T2V CFG Distilled Sparse | 1 | None | 9 | 50 |

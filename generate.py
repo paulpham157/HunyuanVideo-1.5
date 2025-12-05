@@ -101,11 +101,14 @@ def generate_video(args):
     if args.enable_torch_compile and args.enable_cache:
         raise NotImplementedError("enable_torch_compile and enable_cache are not compatible yet.")
     
+    if args.enable_step_distill and args.enable_cache:
+        raise ValueError("Enabling both step distilled model and cache will lead to performance degradation.")
+    
     task = 'i2v' if args.image_path else 't2v'
     
     enable_sr = args.sr
     
-    transformer_version = HunyuanVideo_1_5_Pipeline.get_transformer_version(args.resolution, task, args.cfg_distilled, False, args.sparse_attn)
+    transformer_version = HunyuanVideo_1_5_Pipeline.get_transformer_version(args.resolution, task, args.cfg_distilled, args.enable_step_distill, args.sparse_attn)
     
     if args.dtype == 'bf16':
         transformer_dtype = torch.bfloat16
@@ -115,13 +118,12 @@ def generate_video(args):
         raise ValueError(f"Unsupported dtype: {args.dtype}. Must be 'bf16' or 'fp32'")
     
     # Determine offloading settings
+    enable_offloading = args.offloading
     if args.group_offloading is None:
         # Auto-detect based on offloading config
         offloading_config = HunyuanVideo_1_5_Pipeline.get_offloading_config()
-        enable_offloading = offloading_config['enable_offloading']
         enable_group_offloading = offloading_config['enable_group_offloading']
     else:
-        enable_offloading = args.offloading
         enable_group_offloading = args.group_offloading
     
     overlap_group_offloading = args.overlap_group_offloading
@@ -247,7 +249,7 @@ def main():
         help='Aspect ratio (default: 16:9)'
     )
     parser.add_argument(
-        '--num_inference_steps', type=int, default=50,
+        '--num_inference_steps', type=int, default=None,
         help='Number of inference steps (default: 50)'
     )
     parser.add_argument(
@@ -275,6 +277,12 @@ def main():
         help='Enable CFG distilled model (default: false). '
              'Use --cfg_distilled or --cfg_distilled true/1 to enable, '
              '--cfg_distilled false/0 to disable'
+    )
+    parser.add_argument(
+        '--enable_step_distill', type=str_to_bool, nargs='?', const=True, default=False,
+        help='Enable step distilled model (default: false). '
+             'Use --enable_step_distill or --enable_step_distill true/1 to enable, '
+             '--enable_step_distill false/0 to disable'
     )
     parser.add_argument(
         '--sparse_attn', type=str_to_bool, nargs='?', const=True, default=False,

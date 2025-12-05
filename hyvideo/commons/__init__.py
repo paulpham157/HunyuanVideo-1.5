@@ -96,6 +96,13 @@ PIPELINE_CONFIGS = {
         'embedded_guidance_scale': None,
         'flow_shift': 7.0,
     },
+
+    '480p_i2v_step_distilled': {
+        'guidance_scale': 1.0,
+        'embedded_guidance_scale': None,
+        'flow_shift': 7.0,
+        'num_inference_steps': 8,
+    },
 }
 
 # Default super-resolution pipeline configurations
@@ -129,6 +136,7 @@ TRANSFORMER_VERSION_TO_SR_VERSION = {
     '720p_t2v_distilled_sparse': '1080p_sr_distilled',
     '480p_i2v_distilled_sparse': '720p_sr_distilled',
     '720p_i2v_distilled_sparse': '1080p_sr_distilled',
+    '480p_i2v_step_distilled': '720p_sr_distilled',
 }
 
 def is_flash2_available():

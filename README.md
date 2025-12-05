@@ -41,6 +41,7 @@ HunyuanVideo-1.5 is a video generation model that delivers top-tier quality with
 </p>
 
 ## 🔥🔥🔥 News
+* 🚀 Dec 05, 2025: **New Release**: We now release the [480p I2V step-distilled model](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v_step_distilled), which generates videos in 8 or 12 steps (recommended)! On RTX 4090, end-to-end generation time is reduced by 75%, and a single RTX 4090 can generate videos within 75 seconds. The step-distilled model maintains comparable quality to the original model while achieving significant speedup. See [Step Distillation Comparison](./assets/step_distillation_comparison.md) for detailed quality comparisons. For even faster generation, you can also try 4 steps (faster speed with slightly reduced quality). **To enable the step-distilled model, run `generate.py` with the `--enable_step_distill` parameter.** See [Usage](#-usage) for detailed usage instructions. 🔥🔥🔥🆕
 * 📚 Training code is coming soon. HunyuanVideo-1.5 is trained using the Muon optimizer, which we have open-sourced in the in [Training](#-training) section. **If you would like to continue training our model or fine-tune it with LoRA, please use the Muon optimizer.**
 * 🎉 **Diffusers Support**: HunyuanVideo-1.5 is now available on Hugging Face Diffusers! Check out [Diffusers collection](https://huggingface.co/collections/hunyuanvideo-community/hunyuanvideo-15) for easy integration. 🔥🔥🔥🆕
 * 🚀 Nov 27, 2025: We now support cache inference (deepcache, teacache, taylorcache), achieving significant speedup! Pull the latest code to try it. 🔥🔥🔥🆕 
@@ -201,6 +202,7 @@ For users seeking to optimize prompts for other large models, it is recommended 
 
 ### Inference with Source Code
 
+
 For prompt rewriting, we recommend using Gemini or models deployed via vLLM. This codebase currently only supports models compatible with the vLLM API. If you wish to use Gemini, you will need to implement your own interface calls.
 
 For models with a vLLM API, note that T2V (text-to-video) and I2V (image-to-video) have different recommended models and environment variables:
@@ -212,6 +214,18 @@ For models with a vLLM API, note that T2V (text-to-video) and I2V (image-to-vide
 > Rewriting is enabled by default (`--rewrite` defaults to `true`); to disable it explicitly, use `--rewrite false` or `--rewrite 0`. If no vLLM endpoint is configured, the pipeline runs without remote rewriting.
 
 Example: Generate a video (works for both T2V and I2V; set `IMAGE_PATH=none` for T2V or provide an image path for I2V)
+
+> 💡 **Tip**: For faster inference speed, you can enable the step-distilled model using the `--enable_step_distill` parameter. The step-distilled model (480p I2V) can generate videos in 8 or 12 steps (recommended), achieving up to 75% speedup on RTX 4090 while maintaining comparable quality.
+>
+> **Tips:** If your GPU memory is > 14GB but you encounter OOM (Out of Memory) errors during generation, you can try setting the following environment variable before running:
+> ```bash
+> export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:128
+> ```
+> 
+> **Tips:** If you have limited CPU memory and encounter OOM during inference, you can try disable overlapped group offloading by adding the following argument:
+> ```bash
+> --overlap_group_offloading false
+> ```
 
 ```bash
 export T2V_REWRITE_BASE_URL="<your_vllm_server_base_url>"
@@ -231,6 +245,7 @@ OUTPUT_PATH=./outputs/output.mp4
 REWRITE=true # Enable prompt rewriting. Please ensure rewrite vLLM server is deployed and configured.
 N_INFERENCE_GPU=8 # Parallel inference GPU count
 CFG_DISTILLED=true # Inference with CFG distilled model, 2x speedup
+ENABLE_STEP_DISTILL=true # Enable step distilled model for 480p I2V, recommended 8 or 12 steps, 75% speedup on RTX 4090
 SPARSE_ATTN=false # Inference with sparse attention (only 720p models are equipped with sparse attention). Please ensure flex-block-attn is installed
 SAGE_ATTN=true # Inference with SageAttention
 OVERLAP_GROUP_OFFLOADING=true # Only valid when group offloading is enabled, significantly increases CPU memory usage but speeds up inference
@@ -247,6 +262,7 @@ torchrun --nproc_per_node=$N_INFERENCE_GPU generate.py \
   --seed $SEED \
   --rewrite $REWRITE \
   --cfg_distilled $CFG_DISTILLED \
+  --enable_step_distill $ENABLE_STEP_DISTILL \
   --sparse_attn $SPARSE_ATTN --use_sageattn $SAGE_ATTN \
   --enable_cache $ENABLE_CACHE --cache_type $CACHE_TYPE \
   --overlap_group_offloading $OVERLAP_GROUP_OFFLOADING \
@@ -255,15 +271,6 @@ torchrun --nproc_per_node=$N_INFERENCE_GPU generate.py \
   --model_path $MODEL_PATH
 ```
 
-> **Tips:** If your GPU memory is > 14GB but you encounter OOM (Out of Memory) errors during generation, you can try setting the following environment variable before running:
-> ```bash
-> export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:128
-> ```
-> 
-> **Tips:** If you have limited CPU memory and encounter OOM during inference, you can try disable overlapped group offloading by adding the following argument:
-> ```bash
-> --overlap_group_offloading false
-> ```
 
 
 ### Command Line Arguments
@@ -284,6 +291,7 @@ torchrun --nproc_per_node=$N_INFERENCE_GPU generate.py \
 | `--save_pre_sr_video` | bool | No | `false` | Save original video before super resolution (use `--save_pre_sr_video` or `--save_pre_sr_video true` to enable, only effective when super resolution is enabled) |
 | `--rewrite` | bool | No | `true` | Enable prompt rewriting (use `--rewrite false` or `--rewrite 0` to disable, may result in lower quality video generation) |
 | `--cfg_distilled` | bool | No | `false` | Enable CFG distilled model for faster inference (~2x speedup, use `--cfg_distilled` or `--cfg_distilled true` to enable) |
+| `--enable_step_distill` | bool | No | `false` | Enable step distilled model for 480p I2V (recommended 8 or 12 steps, ~75% speedup on RTX 4090, use `--enable_step_distill` or `--enable_step_distill true` to enable) |
 | `--sparse_attn` | bool | No | `false` | Enable sparse attention for faster inference (~1.5-2x speedup, requires H-series GPUs, auto-enables CFG distilled, use `--sparse_attn` or `--sparse_attn true` to enable) |
 | `--offloading` | bool | No | `true` | Enable CPU offloading (use `--offloading false` or `--offloading 0` to disable for faster inference if GPU memory allows) |
 | `--group_offloading` | bool | No | `None` | Enable group offloading (default: None, automatically enabled if offloading is enabled. Use `--group_offloading` or `--group_offloading true/1` to enable, `--group_offloading false/0` to disable) |
@@ -313,6 +321,7 @@ The following table provides the optimal inference configurations (CFG scale, em
 | 720p I2V | 6 | None | 7 | 50 |
 | 480p T2V CFG Distilled | 1 | None | 5 | 50 |
 | 480p I2V CFG Distilled | 1 | None | 5 | 50 |
+| 480p I2V Step Distilled | 1 | None | 7 | 8 or 12 (recommended) |
 | 720p T2V CFG Distilled | 1 | None | 9 | 50 |
 | 720p I2V CFG Distilled | 1 | None | 7 | 50 |
 | 720p T2V CFG Distilled Sparse | 1 | None | 9 | 50 |
@@ -394,6 +403,7 @@ For more details, please visit [HunyuanVideo-1.5 Diffusers Collection](https://h
 |HunyuanVideo-1.5-480P-I2V |[480P-I2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v) |
 |HunyuanVideo-1.5-480P-T2V-cfg-distill | [480P-T2V-cfg-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_t2v_distilled) |
 |HunyuanVideo-1.5-480P-I2V-cfg-distill |[480P-I2V-cfg-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v_distilled) |
+|HunyuanVideo-1.5-480P-I2V-step-distill |[480P-I2V-step-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v_step_distilled) |
 |HunyuanVideo-1.5-720P-T2V|[720P-T2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_t2v) |
 |HunyuanVideo-1.5-720P-I2V |[720P-I2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_i2v) |
 |HunyuanVideo-1.5-720P-T2V-cfg-distill| Comming soon |

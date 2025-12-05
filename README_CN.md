@@ -40,6 +40,7 @@ HunyuanVideo-1.5作为一款轻量级视频生成模型，仅需83亿参数即�
 </p>
 
 ## 🔥🔥🔥 最新动态
+* 🚀 Dec 05, 2025: **新模型发布**：我们现已发布 [480p I2V 步数蒸馏模型](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v_step_distilled)，建议使用 8 或 12 步生成视频！在 RTX 4090 上，端到端生成耗时减少 75%，单卡 RTX 4090 可在 75 秒内生成视频。步数蒸馏模型在保持与原模型相当质量的同时实现了显著的加速。详细的质量对比请参见[步数蒸馏对比文档](./assets/step_distillation_comparison.md)。如需更快的生成速度，您也可以尝试使用4步推理（速度更快，质量略有下降）。**启用步数蒸馏模型，请运行 `generate.py` 并使用 `--enable_step_distill` 参数。** 详细的使用说明请参见[使用方法](#-使用方法)。 🔥🔥🔥🆕
 * 📚 训练代码即将发布。HunyuanVideo-1.5 使用 Muon 优化器进行训练，我们在[Training](#-training) 部分开源。**如果您希望继续训练我们的模型，或使用 LoRA 进行微调，请使用 Muon 优化器。**
 * 🎉 **Diffusers 支持**：HunyuanVideo-1.5 现已支持 Hugging Face Diffusers！查看我们的 [Diffusers 集合](https://huggingface.co/collections/hunyuanvideo-community/hunyuanvideo-15) 以便轻松集成。 🔥🔥🔥🆕
 * 🚀 Nov 27, 2025: 我们现已支持 cache 推理（deepcache, teacache, taylorcache），可极大加速推理！请 pull 最新代码体验。 🔥🔥🔥🆕 
@@ -214,6 +215,18 @@ pip install -i https://mirrors.tencent.com/pypi/simple/ --upgrade tencentcloud-s
 
 示例：生成视频（支持 T2V/I2V。T2V 模式下设置 `IMAGE_PATH=none`，I2V 模式下指定图像路径）
 
+> 💡 **提示**：为了更快的推理速度，您可以使用 `--enable_step_distill` 参数启用步数蒸馏模型。步数蒸馏模型（480p I2V）可使用 8 或 12 步（推荐）生成视频，在 RTX 4090 上可提速高达 75%，同时保持相当的质量。
+>
+> **Tips:** 如果您的 GPU 内存 > 14GB 但您在生成过程中遇到 OOM (Out of Memory) 错误，可以尝试在运行前设置以下环境变量：
+> ```bash
+> export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:128
+> ```
+> 
+> **Tips:** 如果您有 CPU 内存有限并且遇到推理时的 OOM 错误，可以尝试禁用重叠组卸载，通过添加以下参数：
+> ```bash
+> --overlap_group_offloading false
+> ```
+
 ```bash
 export T2V_REWRITE_BASE_URL="<your_vllm_server_base_url>"
 export T2V_REWRITE_MODEL_NAME="<your_model_name>"
@@ -232,6 +245,7 @@ OUTPUT_PATH=./outputs/output.mp4
 REWRITE=true # 启用提示词重写。请确保 rewrite vLLM server 已部署和配置。
 N_INFERENCE_GPU=8 # 并行推理 GPU 数量
 CFG_DISTILLED=true # 使用 CFG 蒸馏模型进行推理，2倍加速
+ENABLE_STEP_DISTILL=true # 启用 480p I2V 步数蒸馏模型，推荐 8 或 12 步，在 RTX 4090 上可提速 75%
 SPARSE_ATTN=false # 使用稀疏注意力进行推理（仅 720p 模型配备了稀疏注意力）。请确保 flex-block-attn 已安装
 SAGE_ATTN=true # 使用 SageAttention 进行推理
 OVERLAP_GROUP_OFFLOADING=true # 仅在组卸载启用时有效，会显著增加 CPU 内存占用，但能够提速
@@ -248,6 +262,7 @@ torchrun --nproc_per_node=$N_INFERENCE_GPU generate.py \
   --seed $SEED \
   --rewrite $REWRITE \
   --cfg_distilled $CFG_DISTILLED \
+  --enable_step_distill $ENABLE_STEP_DISTILL \
   --sparse_attn $SPARSE_ATTN --use_sageattn $SAGE_ATTN \
   --enable_cache $ENABLE_CACHE --cache_type $CACHE_TYPE \
   --overlap_group_offloading $OVERLAP_GROUP_OFFLOADING \
@@ -255,16 +270,6 @@ torchrun --nproc_per_node=$N_INFERENCE_GPU generate.py \
   --output_path $OUTPUT_PATH \
   --model_path $MODEL_PATH
 ```
-
-> **Tips:** 如果您的 GPU 内存 > 14GB 但您在生成过程中遇到 OOM (Out of Memory) 错误，可以尝试在运行前设置以下环境变量：
-> ```bash
-> export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:128
-> ```
-> 
-> **Tips:** 如果您有 CPU 内存有限并且遇到推理时的 OOM 错误，可以尝试禁用重叠组卸载，通过添加以下参数：
-> ```bash
-> --overlap_group_offloading false
-> ```
 
 ### 命令行参数
 
@@ -284,6 +289,7 @@ torchrun --nproc_per_node=$N_INFERENCE_GPU generate.py \
 | `--save_pre_sr_video` | bool | 否 | `false` | 保存超分辨率处理前的原始视频（使用 `--save_pre_sr_video` 或 `--save_pre_sr_video true` 来启用，仅在启用超分辨率时有效） |
 | `--rewrite` | bool | 否 | `true` | 启用提示词重写（使用 `--rewrite false` 或 `--rewrite 0` 来禁用，禁用可能导致视频生成质量降低） |
 | `--cfg_distilled` | bool | 否 | `false` | 启用 CFG 蒸馏模型以加速推理（约 2 倍加速，使用 `--cfg_distilled` 或 `--cfg_distilled true` 来启用） |
+| `--enable_step_distill` | bool | 否 | `false` | 启用 480p I2V 步数蒸馏模型（推荐 8 或 12 步，在 RTX 4090 上可提速约 75%，使用 `--enable_step_distill` 或 `--enable_step_distill true` 来启用） |
 | `--sparse_attn` | bool | 否 | `false` | 启用稀疏注意力以加速推理（约 1.5-2 倍加速，需要 H 系列 GPU，会自动启用 CFG 蒸馏，使用 `--sparse_attn` 或 `--sparse_attn true` 来启用） |
 | `--offloading` | bool | 否 | `true` | 启用 CPU 卸载（使用 `--offloading false` 或 `--offloading 0` 来禁用，如果 GPU 内存允许，禁用后速度会更快） |
 | `--group_offloading` | bool | 否 | `None` | 启用组卸载（默认：None，如果启用了 offloading 则自动启用。使用 `--group_offloading` 或 `--group_offloading true/1` 来启用，`--group_offloading false/0` 来禁用） |
@@ -314,6 +320,7 @@ torchrun --nproc_per_node=$N_INFERENCE_GPU generate.py \
 | 720p I2V | 6 | None | 7 | 50 |
 | 480p T2V cfg 蒸馏 | 1 | None | 5 | 50 |
 | 480p I2V cfg 蒸馏 | 1 | None | 5 | 50 |
+| 480p I2V 步数蒸馏 | 1 | None | 7 | 8 或 12（推荐） |
 | 720p T2V cfg 蒸馏 | 1 | None | 9 | 50 |
 | 720p I2V cfg 蒸馏 | 1 | None | 7 | 50 |
 | 720p T2V cfg 蒸馏稀疏 | 1 | None | 9 | 50 |
@@ -395,6 +402,7 @@ with attention_backend("_flash_3_hub"): # 如果您不在 H100/H800 上，可以
 |HunyuanVideo-1.5-480P-I2V |[480P-I2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v) |
 |HunyuanVideo-1.5-480P-T2V-cfg-distill | [480P-T2V-cfg-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_t2v_distilled) |
 |HunyuanVideo-1.5-480P-I2V-cfg-distill |[480P-I2V-cfg-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v_distilled) |
+|HunyuanVideo-1.5-480P-I2V-step-distill |[480P-I2V-step-distill](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/480p_i2v_step_distilled) |
 |HunyuanVideo-1.5-720P-T2V|[720P-T2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_t2v) |
 |HunyuanVideo-1.5-720P-I2V |[720P-I2V](https://huggingface.co/tencent/HunyuanVideo-1.5/tree/main/transformer/720p_i2v) |
 |HunyuanVideo-1.5-720P-T2V-cfg-distill| Comming soon |

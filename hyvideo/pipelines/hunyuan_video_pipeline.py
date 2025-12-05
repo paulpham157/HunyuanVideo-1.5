@@ -98,6 +98,7 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
         text_encoder_2: Optional[TextEncoder] = None,
         flow_shift: float = 7.0,
         guidance_scale: float = 6.0,
+        num_inference_steps: int = 50,
         embedded_guidance_scale: Optional[float] = None,
         progress_bar_config: Dict[str, Any] = None,
         vision_num_semantic_tokens=729,
@@ -121,6 +122,7 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
             flow_shift=flow_shift,
             guidance_scale=guidance_scale,
             embedded_guidance_scale=embedded_guidance_scale,
+            num_inference_steps=num_inference_steps,
         )
 
         if progress_bar_config is None:
@@ -885,7 +887,7 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
         aspect_ratio: str,
         video_length: int,
         prompt_rewrite: bool = True,
-        num_inference_steps: int = 50,
+        num_inference_steps: int = None,
         guidance_scale: Optional[float] = None,
         enable_sr: bool = True,
         sr_num_inference_steps: Optional[int] = None,
@@ -963,6 +965,8 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
             embedded_guidance_scale = self.config.embedded_guidance_scale
         if flow_shift is None:
             flow_shift = self.config.flow_shift
+        if num_inference_steps is None:
+            num_inference_steps = self.config.num_inference_steps
 
         if embedded_guidance_scale is not None:
             assert not self.do_classifier_free_guidance
@@ -1446,10 +1450,13 @@ class HunyuanVideo_1_5_Pipeline(DiffusionPipeline):
         # Note: sparse attention requires distilled model, so if sparse_attn is enabled,
         # we automatically include distilled in the version string
         transformer_version = f'{resolution}_{task}'
-        if cfg_distilled or sparse_attn:
-            transformer_version += '_distilled'
-        if sparse_attn:
-            transformer_version += '_sparse'
+        if step_distilled:
+            transformer_version += '_step_distilled'
+        else:
+            if cfg_distilled or sparse_attn:
+                transformer_version += '_distilled'
+            if sparse_attn:
+                transformer_version += '_sparse'
         return transformer_version
 
     @classmethod

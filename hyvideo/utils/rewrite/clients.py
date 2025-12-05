@@ -150,7 +150,11 @@ class QwenVLClient(object):
             raise e
 
         try:
-            with Image.open(image_path) as img:
+            image = image_path
+            if not isinstance(image, Image.Image):
+                image = Image.open(image)
+
+            with image as img:
                 if img.width > max_dimension or img.height > max_dimension:
                     img.thumbnail((max_dimension, max_dimension))
 
